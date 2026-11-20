@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Restaurant Dashboard | Gourmet Luxe</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" type="text/css" href="dashboard.css"/>
+<script src="dashboard.js" defer></script>
+</head>
+
+<body>
+
+<nav class="navbar navbar-dark sticky-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand" href="index.html">
+      <i class="fa-solid fa-crown me-2"></i>GOURMET LUXE
+    </a>
+    <span class="small muted">Restaurant Management Dashboard</span>
+  </div>
+</nav>
+
+<div class="container-fluid">
+<div class="row">
+
+<!-- SIDEBAR -->
+<aside class="col-md-3 col-lg-2 sidebar">
+
+  <p class="text-uppercase small gold px-3 mb-3">
+    Management
+  </p>
+
+  <a href="#" class="active" data-section="overview">
+    <i class="fa-solid fa-chart-line me-2"></i>Overview
+  </a>
+
+  <a href="#" data-section="products">
+    <i class="fa-solid fa-utensils me-2"></i>My Products
+  </a>
+
+  <a href="#" data-section="addProduct">
+    <i class="fa-solid fa-plus me-2"></i>Add Product
+  </a>
+
+  <a href="#" data-section="restaurant">
+    <i class="fa-solid fa-store me-2"></i>Restaurant
+  </a>
+
+  <hr class="border-secondary">
+
+  <a href="#" id="viewStoreLink">
+    <i class="fa-solid fa-eye me-2"></i>View My Store
+  </a>
+
+  <a href="index.html">
+    <i class="fa-solid fa-arrow-left me-2"></i>Main Shop
+  </a>
+
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="col-md-9 col-lg-10 main-content">
+
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+      <h2 class="mb-1">Restaurant Dashboard</h2>
+      <p class="muted mb-0">Manage your restaurant and food portfolio.</p>
+    </div>
+
+    <div style="min-width:230px">
+      <label class="form-label small">Select your restaurant</label>
+      <select id="storeSelector" class="form-select">
+        <option value="golden-kitchen">Golden Kitchen</option>
+        <option value="ocean-table">Ocean Table</option>
+        <option value="sakura-house">Sakura House</option>
+        <option value="citrus-bar">Citrus Bar</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- OVERVIEW -->
+  <section id="overview" class="section active">
+
+    <h3 class="mb-4">Overview</h3>
+
+    <div class="row g-3 mb-4">
+
+      <div class="col-sm-6 col-xl-4">
+        <div class="stat-card">
+          <i class="fa-solid fa-burger"></i>
+          <p class="muted mt-3 mb-1">Total Products</p>
+          <div class="stat-number" id="totalProducts">0</div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <div class="stat-card">
+          <i class="fa-solid fa-layer-group"></i>
+          <p class="muted mt-3 mb-1">Categories</p>
+          <div class="stat-number" id="totalCategories">0</div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-4">
+        <div class="stat-card">
+          <i class="fa-solid fa-euro-sign"></i>
+          <p class="muted mt-3 mb-1">Average Product Price</p>
+          <div class="stat-number" id="averagePrice">€0.00</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="panel">
+      <h4 class="gold mb-3">Welcome to your restaurant dashboard</h4>
+      <p class="muted">
+        Here you can manage your restaurant's food portfolio.
+        Add new dishes, upload photographs, change prices and
+        descriptions, or remove products from your store.
+      </p>
+      <button class="btn btn-gold" onclick="showSection('addProduct')">
+        <i class="fa-solid fa-plus me-2"></i>Add Your First Product
+      </button>
+    </div>
+
+  </section>
+
+  <!-- PRODUCT MANAGEMENT -->
+  <section id="products" class="section">
+
+    <div class="d-flex justify-content-between flex-wrap gap-3 mb-4">
+      <div>
+        <h3>My Products</h3>
+        <p class="muted">Manage all dishes in your restaurant.</p>
+      </div>
+
+      <button class="btn btn-gold" onclick="newProduct()">
+        <i class="fa-solid fa-plus me-2"></i>Add Product
+      </button>
+    </div>
+
+    <div class="panel">
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Product</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="productTable"></tbody>
+        </table>
+      </div>
+
+      <div id="emptyProducts" class="empty-state d-none">
+        <i class="fa-solid fa-box-open fa-2x mb-3"></i>
+        <p>No products have been added yet.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ADD / EDIT PRODUCT -->
+  <section id="addProduct" class="section">
+
+    <h3 class="mb-2" id="formHeading">Add New Product</h3>
+    <p class="muted mb-4">Enter your dish information and upload an image.</p>
+
+    <div class="panel">
+
+      <form id="productForm">
+
+        <input type="hidden" id="editId">
+
+        <div class="row g-4">
+
+          <div class="col-lg-6">
+
+            <label class="form-label">Product Name *</label>
+            <input id="productName" class="form-control mb-3"
+              placeholder="e.g. Premium Wagyu Burger" required>
+
+            <label class="form-label">Category *</label>
+            <select id="productCategory" class="form-select mb-3" required>
+              <option value="">Select category</option>
+              <option>Gourmet Burgers</option>
+              <option>Seafood</option>
+              <option>Seafood & Pasta</option>
+              <option>Sushi</option>
+              <option>Pizza</option>
+              <option>Pasta</option>
+              <option>Meat Dishes</option>
+              <option>Vegetarian</option>
+              <option>Desserts</option>
+              <option>Drinks</option>
+              <option>Other</option>
+            </select>
+
+            <label class="form-label">Price (€) *</label>
+            <input id="productPrice" type="number" min="0"
+              step="0.01" class="form-control mb-3"
+              placeholder="e.g. 18.50" required>
+
+            <label class="form-label">Short Description *</label>
+            <textarea id="productDescription" class="form-control mb-3"
+              rows="4" placeholder="Describe your dish, ingredients and preparation..."
+              required></textarea>
+
+            <label class="form-label">Availability</label>
+            <select id="productAvailability" class="form-select mb-3">
+              <option value="Available">Available</option>
+              <option value="Unavailable">Currently unavailable</option>
+            </select>
+
+          </div>
+
+          <div class="col-lg-6">
+
+            <label class="form-label">Product Image</label>
+
+            <div class="image-upload mb-3">
+              <i class="fa-solid fa-cloud-arrow-up fa-2x gold mb-3"></i>
+              <p class="muted small">
+                Choose a food image from your computer.
+              </p>
+
+              <input type="file" id="productImage"
+                class="form-control" accept="image/*">
+
+              <small class="muted d-block mt-2">
+                JPG, PNG or WebP. Maximum 3 MB.
+              </small>
+            </div>
+
+            <img id="imagePreview" class="preview-image d-none"
+              alt="Product image preview">
+
+            <p class="muted small mt-3">
+              Tip: Use clear, high-quality photographs of your dishes.
+            </p>
+
+          </div>
+
+        </div>
+
+        <hr class="border-secondary my-4">
+
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-gold">
+            <i class="fa-solid fa-floppy-disk me-2"></i>Save Product
+          </button>
+
+          <button type="button" class="btn btn-outline-gold"
+            onclick="resetForm()">
+            Cancel
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </section>
+
+  <!-- RESTAURANT INFORMATION -->
+  <section id="restaurant" class="section">
+
+    <h3 class="mb-2">Restaurant Information</h3>
+    <p class="muted mb-4">Basic information for your public store page.</p>
+
+    <div class="panel">
+      <form id="restaurantForm">
+
+        <label class="form-label">Restaurant Name</label>
+        <input id="restaurantName" class="form-control mb-3" required>
+
+        <label class="form-label">Short Tagline</label>
+        <input id="restaurantTagline" class="form-control mb-3">
+
+        <label class="form-label">Description</label>
+        <textarea id="restaurantDescription" class="form-control mb-3"
+          rows="4"></textarea>
+
+        <label class="form-label">Address</label>
+        <input id="restaurantAddress" class="form-control mb-3">
+
+        <label class="form-label">Opening Hours</label>
+        <input id="restaurantHours" class="form-control mb-3">
+
+        <label class="form-label">Restaurant Logo URL</label>
+        <input id="restaurantLogo" class="form-control mb-3"
+          placeholder="https://example.com/logo.jpg">
+
+        <button class="btn btn-gold" type="submit">
+          <i class="fa-solid fa-floppy-disk me-2"></i>Save Restaurant Details
+        </button>
+
+      </form>
+    </div>
+
+  </section>
+
+  <p class="muted small mt-4">
+    Gourmet Luxe Restaurant Management · Demo dashboard
+  </p>
+
+</main>
+</div>
+</div>
+
+</body>
+</html>
