@@ -121,6 +121,35 @@ const params = new URLSearchParams(window.location.search);
 const storeId = params.get("store");
 const store = storeId ? stores[storeId] : null;
 
+// Load products uploaded through the restaurant dashboard
+if (store) {
+  try {
+    const savedProducts = JSON.parse(
+      localStorage.getItem("gourmetProducts_" + storeId)
+    );
+
+    if (Array.isArray(savedProducts)) {
+      store.products = savedProducts;
+    }
+
+    // Load updated restaurant information
+    const savedRestaurant = JSON.parse(
+      localStorage.getItem("gourmetRestaurant_" + storeId)
+    );
+
+    if (savedRestaurant) {
+      store.name = savedRestaurant.name || store.name;
+      store.tagline = savedRestaurant.tagline || store.tagline;
+      store.about = savedRestaurant.description || store.about;
+      store.address = savedRestaurant.address || store.address;
+      store.hours = savedRestaurant.hours || store.hours;
+      store.logo = savedRestaurant.logo || store.logo;
+    }
+  } catch (error) {
+    console.error("Could not load restaurant data:", error);
+  }
+}
+
 const $ = id => document.getElementById(id);
 
 if (!store) {
